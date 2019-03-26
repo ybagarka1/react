@@ -1,0 +1,12 @@
+
+> tripntails@0.1.0 start C:\Users\ybagarka\reactjs_tutorial\tutorialspoint\tripntails
+> react-scripts start
+
+Starting the development server...
+
+Failed to compile.
+
+./src/index.js
+Module not found: You attempted to import ../components/Button which falls outside of the project src/ directory. Relative imports outside of src/ are not supported.
+Compiling...
+Compiled successfully!
