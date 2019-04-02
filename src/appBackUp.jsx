@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import  {ButtonToolbar, Button} from 'react-bootstrap';
 import axios from 'axios';
 
-var cors = require('cors')
-
 class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -14,20 +12,6 @@ class Login extends React.Component {
     this.handleChangeEmail = this.handleChangeEmail.bind(this);
     this.handleChangePassword = this.handleChangePassword.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  
-
-  }
-
-  async onLogin() {
-    const { email, password, username } = this.state;
-    try {
-      const response = await axios.post('http://52.151.79.89:80/api/v1/users/', { email, password, username });
-      console.log(response);
-    }
-    catch (err) 
-    {
-
-    }
 
   }
 
@@ -69,48 +53,57 @@ return(
 }
 }
 
-class PersonList extends React.Component {
-  state = {
-    name: '',
-  }
-
-  handleChange = event => {
-    this.setState({ name: event.target.value });
-  }
-
-  handleSubmit = event => {
-    event.preventDefault();
-
-    const user = {
-      name: this.state.name
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null,
+      isLoaded: false,
+      items: []
     };
-      var headers = {
-        'Access-Control-Allow-Credentials' : 'true',
-        "Access-Control-Allow-Origin" : "*",
-    
-        
-      }
-    axios.post("http://52.151.79.89:80/api/v1/users/", { user }, {headers: headers})
-      .then(res => {
-        console.log(res);
-        console.log(res.data);
-      })
+  }
+
+  componentDidMount() {
+    fetch("http://52.151.79.89:80/api/v1/users/")
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            isLoaded: true,
+            items: result.items
+          });
+        },
+        // Note: it's important to handle errors here
+        // instead of a catch() block so that we don't swallow
+        // exceptions from actual bugs in components.
+        (error) => {
+          this.setState({
+            isLoaded: true,
+            error
+          });
+        }
+      )
   }
 
   render() {
-    return (
-      <div>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Person Name:
-            <input type="text" name="name" onChange={this.handleChange} />
-          </label>
-          <button type="submit">Add</button>
-        </form>
-      </div>
-    )
+    const { error, isLoaded, items } = this.state;
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Loading...</div>;
+    } else {
+      return (
+        <ul>
+          {items.map(item => (
+            <li key={item.name}>
+              {item.name} {item.price}
+            </li>
+          ))}
+        </ul>
+      );
+    }
   }
 }
 
 
-export default PersonList  ;
+export default Login ;
